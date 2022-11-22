@@ -34,7 +34,7 @@ namespace DesktopApp.Forms
                     btn.FlatAppearance.BorderColor = TemasDeCores.CorSecundaria;
                 }
             }
-            label1.ForeColor = TemasDeCores.CorPrimaria;
+            //label1.ForeColor = TemasDeCores.CorPrimaria;
         }
     }
 }

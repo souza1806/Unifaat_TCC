@@ -4,13 +4,14 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DesktopApp
 {
-    public partial class MenuPrincipal : Form
+    public partial class FormMenuPrincipal : Form
     {
         //Campos
         private Button botaoAtual;
@@ -19,11 +20,22 @@ namespace DesktopApp
         private Form activeForm;
 
         //Construtor
-        public MenuPrincipal()
+        public FormMenuPrincipal()
         {
             InitializeComponent();
             aleatorio = new Random();
+            btnCloseChildForm.Visible = false;
+            this.Text = String.Empty;
+            this.ControlBox = false;
+            this.MaximizedBounds = Screen.FromHandle(this.Handle).WorkingArea;
         }
+
+        [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
+        private extern static void ReleaseCapture();
+
+        [DllImport("user32.DLL", EntryPoint = "SendMessage")]
+        private extern static void SendMessage(System.IntPtr hWnd, int wMsg, int wParam, int lParam);
+
 
         //Metodos
         private Color SelecionarTemaDeCor()
@@ -54,6 +66,7 @@ namespace DesktopApp
                     panelLogo.BackColor = TemasDeCores.AlterarBrilho(cor, -0.4);
                     TemasDeCores.CorPrimaria = cor;
                     TemasDeCores.CorSecundaria = TemasDeCores.AlterarBrilho(cor, -0.4);
+                    btnCloseChildForm.Visible = true;
                 }
             }
         }
@@ -102,6 +115,48 @@ namespace DesktopApp
         private void btnCandidatos_Click(object sender, EventArgs e)
         {
             OpenChildForm(new Forms.FormCandidatos(), sender);
+        }
+
+        private void btnCloseChildForm_Click(object sender, EventArgs e)
+        {
+            if(activeForm != null)
+                activeForm.Close();
+            Reset();
+        }
+
+        private void Reset()
+        {
+            DesabilitarBotao();
+            lblTitulo.Text = "HOME";
+            panelBarraTitulo.BackColor = Color.FromArgb(0, 150, 136);
+            panelLogo.BackColor = Color.FromArgb(39, 39, 58);
+            botaoAtual = null;
+            btnCloseChildForm.Visible = false;
+
+        }
+
+        private void panelBarraTitulo_MouseDown(object sender, MouseEventArgs e)
+        {
+            ReleaseCapture();
+            SendMessage(this.Handle, 0x112, 0xf012, 0);
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void btnMaximize_Click(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Normal)
+                this.WindowState = FormWindowState.Maximized;
+            else
+                this.WindowState = FormWindowState.Normal;
+        }
+
+        private void btnMinimize_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
     }
 }
