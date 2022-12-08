@@ -16,7 +16,7 @@ namespace DesktopApp
         //Campos
         private Button botaoAtual;
         private Random aleatorio;
-        private int tempIndice;
+        public int tempIndice;
         private Form activeForm;
 
         //Construtor
@@ -105,6 +105,7 @@ namespace DesktopApp
         private void btnColaboradores_Click(object sender, EventArgs e)
         {
             OpenChildForm(new Forms.FormColaboradores(),sender);
+            //OpenChildForm(new Forms.FormCadastroColaborador(), sender);
         }
 
         private void btnEmpresas_Click(object sender, EventArgs e)
